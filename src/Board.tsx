@@ -1,14 +1,10 @@
 import React, {useEffect, useRef} from 'react';
 import Tile from './Tile';
+import {PieceProps} from './Piece';
 
 const boardStyle : React.CSSProperties = {
     display: 'flex',
     flexWrap: 'wrap'
-}
-
-export interface PieceProps{
-    color:string
-    king: boolean
 }
 
 const Board: React.FC = () => {
@@ -24,10 +20,10 @@ const Board: React.FC = () => {
 
     function pieceExist(x:number,y:number): PieceProps | null {
         if(y <= 2 && (x+y) % 2 === 1){
-            return {color:'red', king: false}
+            return {color:['#b71c1c','#e53935'], king: false}
         } 
         else if(y >= 5 && (x+y) % 2 === 1){
-            return {color: 'black', king: false}
+            return {color:['#212121','#424242'], king: false}
         }
         else {
             return null;

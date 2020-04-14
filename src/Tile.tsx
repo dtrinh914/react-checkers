@@ -1,6 +1,6 @@
 import React from 'react';
 import Piece from './Piece';
-import {PieceProps} from './Board'
+import {PieceProps} from './Piece'
 
 export interface TileProps {
     x: number
@@ -9,21 +9,19 @@ export interface TileProps {
     piece: PieceProps | null
 }
 
-const blackTileStyle: React.CSSProperties = {
-    width: '12.5%',
-    height: '12.5%',
-    backgroundColor: '#757575'
-}
-
-const whiteTileStyle: React.CSSProperties = {
-    width: '12.5%',
-    height: '12.5%',
-    backgroundColor: '#eeeeee'
-}
-
 const Tile: React.FC<TileProps> = ({x,y, black, piece}) => {
+    const tileColor = black ? '#757575' : '#eeeeee';
+    const TileStyle: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '12.5%',
+        height: '12.5%',
+        backgroundColor: tileColor
+    }
+
     return (
-        <div style={black ? blackTileStyle: whiteTileStyle}>
+        <div style={TileStyle}>
             {piece ? <Piece color={piece.color} king={piece.king} /> : ''}
         </div>
     )
