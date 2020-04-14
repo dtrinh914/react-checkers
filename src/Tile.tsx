@@ -22,7 +22,7 @@ const Tile: React.FC<TileProps> = ({x,y, black, piece}) => {
 
     return (
         <div style={TileStyle}>
-            {piece ? <Piece color={piece.color} king={piece.king} /> : ''}
+            {piece ? <Piece player={piece.player} king={piece.king} /> : ''}
         </div>
     )
 };

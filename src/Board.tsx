@@ -20,10 +20,10 @@ const Board: React.FC = () => {
 
     function pieceExist(x:number,y:number): PieceProps | null {
         if(y <= 2 && (x+y) % 2 === 1){
-            return {color:['#b71c1c','#e53935'], king: false}
+            return {player: 1, king: false}
         } 
         else if(y >= 5 && (x+y) % 2 === 1){
-            return {color:['#212121','#424242'], king: false}
+            return {player: 2, king: false}
         }
         else {
             return null;
