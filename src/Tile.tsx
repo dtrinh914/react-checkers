@@ -1,16 +1,26 @@
 import React from 'react';
 import Piece from './Piece';
-import {PieceProps} from './Piece'
+import {PieceClass} from './Piece';
+import {ItemTypes} from './Constants';
+import {useDrop} from 'react-dnd'
 
-export interface TileProps {
+export interface TileClass {
+    index: number
     x: number
     y: number
-    black: boolean
-    piece: PieceProps | null
+    piece: PieceClass | null
 }
 
-const Tile: React.FC<TileProps> = ({x,y, black, piece}) => {
-    const tileColor = black ? '#757575' : '#eeeeee';
+interface TileProps extends TileClass {
+    movePiece: Function
+}
+
+const Tile: React.FC<TileProps> = ({index, x,y, piece, movePiece}) => {
+
+    //styling
+
+    const black = (x + y)% 2 === 1;
+    const tileColor = black ? 'rgb(117, 117, 117)' : 'rgb(238, 238, 238)';
     const TileStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'center',
@@ -20,9 +30,15 @@ const Tile: React.FC<TileProps> = ({x,y, black, piece}) => {
         backgroundColor: tileColor
     }
 
+    //drag and drop logic
+    const [,drop] = useDrop({
+        accept: ItemTypes.PIECE,
+        drop: () => ({toIndex: index})
+    })
+
     return (
-        <div style={TileStyle}>
-            {piece ? <Piece player={piece.player} king={piece.king} /> : ''}
+        <div data-testid='tile' style={TileStyle} ref={drop}>
+            {piece ? <Piece index={index} player={piece.player} king={piece.king} movePiece={movePiece} /> : ''}
         </div>
     )
 };
