@@ -5,6 +5,7 @@ import {useDrag} from 'react-dnd';
 export interface PieceClass{
     player: number
     king: boolean
+    canDrag: number[]
 }
 
 interface PieceProps extends PieceClass{
@@ -12,12 +13,12 @@ interface PieceProps extends PieceClass{
     movePiece: Function
 }
 
-const Piece: React.FC<PieceProps> = ({index, player, king, movePiece}) => {
+const Piece: React.FC<PieceProps> = ({index, player, king, movePiece, canDrag}) => {
 
     //styling
     const color = player === 1 ? ['rgb(183, 28, 28)','rgb(229, 57, 53)'] : ['rgb(33, 33, 33)','rgb(66, 66, 66)'];
     
-    const outerStyle : React.CSSProperties = {
+    let outerStyle : React.CSSProperties = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -35,20 +36,22 @@ const Piece: React.FC<PieceProps> = ({index, player, king, movePiece}) => {
         backgroundColor: color[1],
     }
 
+    if(canDrag.length > 0) outerStyle = {...outerStyle, backgroundColor:'yellow'}
+
     //drag and drop logic
     const [, drag] = useDrag({
         item: {type: ItemTypes.PIECE},
         end: (item,monitor) => {
             const dropResult = monitor.getDropResult();
             if(item && dropResult){
-                movePiece(index, dropResult.toIndex);
+                movePiece(index, dropResult.toIndex, canDrag);
             }
         }
     });
 
     
     return (
-        <div data-testid='piece-outer' style={outerStyle} ref={drag} >
+        <div data-testid='piece-outer' style={outerStyle} ref={canDrag.length > 0 ? drag : null} >
             <div data-testid='piece-inner' style={innerStyle}>
             </div>
         </div>

@@ -6,8 +6,7 @@ import {useDrop} from 'react-dnd'
 
 export interface TileClass {
     index: number
-    x: number
-    y: number
+    black : boolean
     piece: PieceClass | null
 }
 
@@ -15,11 +14,9 @@ interface TileProps extends TileClass {
     movePiece: Function
 }
 
-const Tile: React.FC<TileProps> = ({index, x,y, piece, movePiece}) => {
+const Tile: React.FC<TileProps> = ({index, black, piece, movePiece}) => {
 
     //styling
-
-    const black = (x + y)% 2 === 1;
     const tileColor = black ? 'rgb(117, 117, 117)' : 'rgb(238, 238, 238)';
     const TileStyle: React.CSSProperties = {
         display: 'flex',
@@ -38,7 +35,8 @@ const Tile: React.FC<TileProps> = ({index, x,y, piece, movePiece}) => {
 
     return (
         <div data-testid='tile' style={TileStyle} ref={drop}>
-            {piece ? <Piece index={index} player={piece.player} king={piece.king} movePiece={movePiece} /> : ''}
+            {piece ? <Piece index={index} player={piece.player} canDrag={piece.canDrag} 
+                        king={piece.king}  movePiece={movePiece}  /> : ''}
         </div>
     )
 };
