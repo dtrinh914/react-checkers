@@ -5,6 +5,7 @@ import {ItemTypes} from './Constants';
 import {useDrop} from 'react-dnd'
 
 export interface TileClass {
+    id?: string 
     index: number
     black : boolean
     piece: PieceClass | null
@@ -12,9 +13,10 @@ export interface TileClass {
 
 interface TileProps extends TileClass {
     movePiece: Function
+    size: number
 }
 
-const Tile: React.FC<TileProps> = ({index, black, piece, movePiece}) => {
+const Tile: React.FC<TileProps> = ({index, black, piece, movePiece, size}) => {
 
     //styling
     const tileColor = black ? 'rgb(117, 117, 117)' : 'rgb(238, 238, 238)';
@@ -35,8 +37,8 @@ const Tile: React.FC<TileProps> = ({index, black, piece, movePiece}) => {
 
     return (
         <div data-testid='tile' style={TileStyle} ref={drop}>
-            {piece ? <Piece index={index} player={piece.player} canDrag={piece.canDrag} 
-                        king={piece.king}  movePiece={movePiece}  /> : ''}
+            {piece ? <Piece player={piece.player} canDrag={piece.canDrag} hasJump={piece.hasJump}
+                        king={piece.king} index={index} movePiece={movePiece} size={size}  /> : ''}
         </div>
     )
 };

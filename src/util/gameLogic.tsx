@@ -1,8 +1,6 @@
 import {GameState} from '../hooks/useBoard';
 import {TileClass} from '../Tile';
 
-
-
 export const indexToCoordinates = (index: number) => {
     const x = index % 8;
     const y = Math.floor(index/8);
@@ -12,6 +10,15 @@ export const indexToCoordinates = (index: number) => {
 export const coordinatesToIndex =  (x: number, y: number) => {
     if(x < 0 || x > 7 || y < 0 || y > 7) return undefined;
     return x + (y*8);
+}
+
+const getMidIndex = (fromIndex: number, toIndex:number) => {
+    const [fromX, fromY] = indexToCoordinates(fromIndex);
+    const [toX, toY] = indexToCoordinates(toIndex);
+
+    const midX = (fromX + toX) / 2;
+    const midY = (fromY + toY) / 2;
+    return coordinatesToIndex(midX,midY);
 }
 
 const withinBounds = (index:number) => {
@@ -24,7 +31,7 @@ const withinBounds = (index:number) => {
 
 const moveDirections = (player:number, king:boolean) => {
     if(king){
-        return [[-1,-1],[1,-1],[1,1],[1,-1]];
+        return [[-1,-1],[1,-1],[1,1],[-1,1]];
     } else {
         return player === 1 ? [[-1,-1],[1,-1]] : [[1,1],[-1,1]];
     }
@@ -47,7 +54,7 @@ const canJump = (index:number, player:number, direction:number[], state: GameSta
     return hasEnemyPiece(index,player,state) && isTileEmpty(newIndex,state);
 }
 
-const canMove = (index:number, player:number, king:boolean, state:GameState) => {
+export const canMove = (index:number, player:number, king:boolean, state:GameState) => {
     let directions = moveDirections(player, king);
     const [x,y] = indexToCoordinates(index);
 
@@ -73,31 +80,80 @@ const canMove = (index:number, player:number, king:boolean, state:GameState) => 
 };
 
 export const updateBoard = (state:GameState) => {
-    const dragIndex = {};
-    const jumpIndex = {};
+    if(state.captureChain !== null){
+        const newTilesState:TileClass[] = state.tiles.map(tile => {
+            if(tile.index === state.captureChain && tile.piece){
+                const [ ,hasJump] = canMove(tile.index, tile.piece.player, tile.piece.king, state);
+                const newPieceState = {...tile.piece, canDrag: hasJump};
+                return {...tile, piece: newPieceState};
+            } else {
+                return tile;
+            }
+        })
 
-    const tiles = state.tiles;
+        return {...state, tiles:newTilesState};
+    } else {
+        const dragIndex = {};
+        const jumpIndex = {};
 
-    tiles.forEach( (tile) => {
-        if(tile.piece){
-            const [canDrag, hasJump] = canMove(tile.index, tile.piece.player, tile.piece.king, state);
-            if(canDrag.length > 0) dragIndex[tile.index] = canDrag;
-            if(hasJump.length > 0) jumpIndex[tile.index] = hasJump;
-        }
-    });
+        const tiles = state.tiles;
+        const playerTurn = state.playerTurn;
 
-    const canDragIndex = Object.keys(jumpIndex).length > 0 ? jumpIndex : dragIndex;
+        tiles.forEach( (tile) => {
+            if(tile.piece && tile.piece.player === playerTurn){
+                const [canDrag, hasJump] = canMove(tile.index, tile.piece.player, tile.piece.king, state);
+                if(canDrag.length > 0) dragIndex[tile.index] = canDrag;
+                if(hasJump.length > 0) jumpIndex[tile.index] = hasJump;
+            }
+        });
 
-    const newTileState:TileClass[] = tiles.map( (tile,index) => {
-        if(tile.piece){
-            const newDrag = canDragIndex[index] ? canDragIndex[index] : [];
-            const newPieceState = {...tile.piece, canDrag: newDrag}
-            
-            return {...tile, piece: newPieceState}
-        } else {
-            return tile;
-        } 
-    });
+        const hasJump = Object.keys(jumpIndex).length > 0; 
+        const canDragIndex = hasJump ? jumpIndex : dragIndex;
+
+        const newTileState:TileClass[] = tiles.map( (tile,index) => {
+            if(tile.piece){
+                const newDrag = canDragIndex[index] ? canDragIndex[index] : [];
+                const newPieceState = {...tile.piece, canDrag: newDrag, hasJump: hasJump}
+                
+                return {...tile, piece: newPieceState}
+            } else {
+                return tile;
+            } 
+        });
     
-    return {...state, tiles:newTileState};
+        return {...state, tiles:newTileState};
+    }
+    
+}
+
+export const handleCapture = (fromIndex:number, toIndex:number, state:GameState) => {
+    const mid = getMidIndex(fromIndex, toIndex);
+
+    if(!mid) return;
+
+    const piece = state.tiles[mid].piece;
+
+    if(!piece) return;
+
+    if(piece.player === 1){
+        state.numPieceOne--;
+    } else {
+        state.numPieceTwo--;
+    }
+
+    state.tiles[mid].piece = null;
+}
+
+export const checkKing = (index:number, state:GameState) => {
+    const piece = state.tiles[index].piece;
+
+    if(!piece) return;
+
+    if(piece.player === 1 && index < 8){
+        piece.king = true;
+    }
+
+    if(piece.player === 2 && index >= 56){
+        piece.king = true;
+    }
 }

@@ -1,6 +1,6 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Tile from './Tile';
-import useBoard,{GameState} from './hooks/useBoard';
+import useBoard from './hooks/useBoard';
 import MultiBackend from 'react-dnd-multi-backend';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch'; 
 import {DndProvider} from 'react-dnd';
@@ -12,18 +12,21 @@ const boardStyle : React.CSSProperties = {
 
 const Board: React.FC = () => {
     const boardRef = useRef<HTMLDivElement>(null);
+    const [size, setSize] = useState(0);
 
     //logic to keep 1:1 aspect ratio of board
     useEffect(()=>{
         const resizeBoard = () => {
             const height = window.innerHeight;
             const width = window.innerWidth;
-            const side = `${Math.min(height, width)}px`;
+            const min = Math.min(height,width);
+            const side = `${min}px`;
 
             if(boardRef && boardRef.current){
                 boardRef.current.style.setProperty('height', side);
                 boardRef.current.style.setProperty('width', side);
             }
+            setSize(min);
         }
 
         resizeBoard();
@@ -32,23 +35,13 @@ const Board: React.FC = () => {
         return () => window.removeEventListener('resize', resizeBoard);
     }, []);
 
-    const [boardState, setBoardState] = useBoard();
-
-    const movePiece = (fromIndex:number, toIndex:number, canDrag:number[]) => {
-        if(canDrag.includes(toIndex)){
-            let newBoardState:GameState = {...boardState};
-            let temp = newBoardState.tiles[toIndex].piece;
-            newBoardState.tiles[toIndex].piece = newBoardState.tiles[fromIndex].piece;
-            newBoardState.tiles[fromIndex].piece = temp;
-            setBoardState(newBoardState);
-        }
-    };
+    const [boardState, movePiece] = useBoard();
 
     return(
         <DndProvider backend={MultiBackend} options={HTML5toTouch}>
             <div data-testid='board' ref={boardRef} style={boardStyle}>
-                {boardState.tiles.map( tile  => <Tile key={tile.index} index={tile.index} black={tile.black} movePiece={movePiece}
-                                                        piece={tile.piece} />)}
+                {boardState.tiles.map( tile  => <Tile key={tile.id} index={tile.index} black={tile.black} movePiece={movePiece}
+                                                        piece={tile.piece} size={size} />)}
             </div>
         </DndProvider>
     )

@@ -6,17 +6,20 @@ export interface PieceClass{
     player: number
     king: boolean
     canDrag: number[]
+    hasJump: boolean
 }
 
 interface PieceProps extends PieceClass{
     index: number
     movePiece: Function
+    size: number
 }
 
-const Piece: React.FC<PieceProps> = ({index, player, king, movePiece, canDrag}) => {
+const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, movePiece, size}) => {
 
     //styling
     const color = player === 1 ? ['rgb(183, 28, 28)','rgb(229, 57, 53)'] : ['rgb(33, 33, 33)','rgb(66, 66, 66)'];
+    const iconSize = `${size/21}px`
     
     let outerStyle : React.CSSProperties = {
         display: 'flex',
@@ -30,10 +33,18 @@ const Piece: React.FC<PieceProps> = ({index, player, king, movePiece, canDrag}) 
     }
 
     const innerStyle: React.CSSProperties = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         width:'79%',
         height:'79%',
         borderRadius: '100px',
         backgroundColor: color[1],
+    }
+
+    const kingStyle: React.CSSProperties = {
+        color: color[0],
+        fontSize: iconSize
     }
 
     if(canDrag.length > 0) outerStyle = {...outerStyle, backgroundColor:'yellow'}
@@ -44,7 +55,7 @@ const Piece: React.FC<PieceProps> = ({index, player, king, movePiece, canDrag}) 
         end: (item,monitor) => {
             const dropResult = monitor.getDropResult();
             if(item && dropResult){
-                movePiece(index, dropResult.toIndex, canDrag);
+                movePiece(index, dropResult.toIndex, canDrag, hasJump);
             }
         }
     });
@@ -53,6 +64,7 @@ const Piece: React.FC<PieceProps> = ({index, player, king, movePiece, canDrag}) 
     return (
         <div data-testid='piece-outer' style={outerStyle} ref={canDrag.length > 0 ? drag : null} >
             <div data-testid='piece-inner' style={innerStyle}>
+                {king ? <i className="fas fa-crown" style={kingStyle}></i> : ''}
             </div>
         </div>
     )
