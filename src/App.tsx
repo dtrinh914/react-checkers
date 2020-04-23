@@ -1,5 +1,8 @@
 import React from 'react';
 import Board from './Board';
+import MultiBackend from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch'; 
+import {DndProvider} from 'react-dnd';
 
 const appStyle : React.CSSProperties = {
   display: 'flex',
@@ -12,7 +15,9 @@ const appStyle : React.CSSProperties = {
 const App : React.FC = () => {
   return (
     <div style={appStyle}>
-      <Board />
+      <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+        <Board />
+      </DndProvider>
     </div>
   )
 }

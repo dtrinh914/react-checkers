@@ -1,9 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import Tile from './Tile';
 import useBoard from './hooks/useBoard';
-import MultiBackend from 'react-dnd-multi-backend';
-import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch'; 
-import {DndProvider} from 'react-dnd';
 
 const boardStyle : React.CSSProperties = {
     display: 'flex',
@@ -38,12 +35,10 @@ const Board: React.FC = () => {
     const [boardState, movePiece] = useBoard();
 
     return(
-        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-            <div data-testid='board' ref={boardRef} style={boardStyle}>
-                {boardState.tiles.map( tile  => <Tile key={tile.id} index={tile.index} black={tile.black} movePiece={movePiece}
-                                                        piece={tile.piece} size={size} />)}
-            </div>
-        </DndProvider>
+        <div data-testid='board' ref={boardRef} style={boardStyle}>
+            {boardState.tiles.map( tile  => <Tile key={tile.id} index={tile.index} black={tile.black} movePiece={movePiece}
+                                                    piece={tile.piece} size={size} />)}
+        </div>
     )
 };
 

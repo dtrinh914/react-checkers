@@ -37,6 +37,7 @@ const Tile: React.FC<TileProps> = ({index, black, piece, movePiece, size}) => {
 
     return (
         <div data-testid='tile' style={TileStyle} ref={drop}>
+            {index}
             {piece ? <Piece player={piece.player} canDrag={piece.canDrag} hasJump={piece.hasJump}
                         king={piece.king} index={index} movePiece={movePiece} size={size}  /> : ''}
         </div>

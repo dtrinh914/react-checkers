@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {TileClass} from '../Tile';
 import {PieceClass} from '../Piece';
-import {updateBoard, indexToCoordinates, handleCapture, checkKing, canMove} from '../util/gameLogic';
+import {updateBoard, indexToCoordinates, movePiece} from '../util/gameLogic';
 import {v4 as uuid} from 'uuid';
 
 export interface GameState{
@@ -10,10 +10,10 @@ export interface GameState{
     tiles: TileClass[]
     numPieceOne: number
     numPieceTwo: number
-    captureChain: number | null
+    jumping: number | null
 }
 
-const initialState = () => {
+export const initialState = () => {
     const tiles: TileClass[] = [];
 
     for(let i = 0; i < 64; i++){
@@ -28,7 +28,7 @@ const initialState = () => {
                                tiles: tiles,
                                numPieceOne: 12,
                                numPieceTwo: 12,
-                               captureChain: null
+                               jumping: null
                               }
 
     return updateBoard(state);
@@ -53,37 +53,15 @@ const initialState = () => {
     }
 }
 
-const useBoard = (init = initialState()):any => {
+const useBoard = (init = initialState()) => {
     const [boardState, setBoardState] = useState(init);
 
-    const handleBoardState = (state:GameState) => {
-        setBoardState(updateBoard(state));
+    const move = (from, to) => {
+        const newState = movePiece(from, to, boardState);
+        setBoardState(newState)
     }
 
-    const movePiece = (fromIndex:number, toIndex:number, canDrag:number[], hasJump:boolean) => {
-        if(canDrag.includes(toIndex)){
-            let newBoardState:GameState = {...boardState};
-            let temp = newBoardState.tiles[toIndex].piece;
-            newBoardState.tiles[toIndex].piece = newBoardState.tiles[fromIndex].piece;
-            newBoardState.tiles[fromIndex].piece = temp;
-
-            if(hasJump){
-                handleCapture(fromIndex, toIndex, newBoardState);
-                const currPiece = newBoardState.tiles[toIndex].piece;
-                
-                if(currPiece){
-                    const [,hasJump] = canMove(toIndex, currPiece.player, currPiece.king, newBoardState);
-                    newBoardState.captureChain = hasJump.length > 0 ? toIndex : null;
-                }
-            }
-
-            checkKing(toIndex, newBoardState);
-            newBoardState.playerTurn = newBoardState.playerTurn === 1 ? 2 : 1;
-            handleBoardState(newBoardState);
-        }
-    };
-
-    return [boardState, movePiece];
+    return [boardState, move];
 }
 
 export default useBoard;

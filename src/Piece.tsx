@@ -3,7 +3,7 @@ import {ItemTypes} from './Constants';
 import {useDrag} from 'react-dnd';
 
 export interface PieceClass{
-    player: number
+    player: 1 | 2
     king: boolean
     canDrag: number[]
     hasJump: boolean
@@ -39,7 +39,7 @@ const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, mov
         width:'79%',
         height:'79%',
         borderRadius: '100px',
-        backgroundColor: color[1],
+        backgroundColor: color[1]
     }
 
     const kingStyle: React.CSSProperties = {
@@ -47,7 +47,7 @@ const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, mov
         fontSize: iconSize
     }
 
-    if(canDrag.length > 0) outerStyle = {...outerStyle, backgroundColor:'yellow'}
+    if(canDrag.length > 0) outerStyle = {...outerStyle, backgroundColor:'rgb(255, 238, 88)'}
 
     //drag and drop logic
     const [, drag] = useDrag({
@@ -55,7 +55,7 @@ const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, mov
         end: (item,monitor) => {
             const dropResult = monitor.getDropResult();
             if(item && dropResult){
-                movePiece(index, dropResult.toIndex, canDrag, hasJump);
+                movePiece(index, dropResult.toIndex);
             }
         }
     });
@@ -64,7 +64,7 @@ const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, mov
     return (
         <div data-testid='piece-outer' style={outerStyle} ref={canDrag.length > 0 ? drag : null} >
             <div data-testid='piece-inner' style={innerStyle}>
-                {king ? <i className="fas fa-crown" style={kingStyle}></i> : ''}
+                {king ? <i data-testid='piece-king' className="fas fa-crown" style={kingStyle}></i> : ''}
             </div>
         </div>
     )
