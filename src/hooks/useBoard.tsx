@@ -53,13 +53,13 @@ export const initialState = () => {
     }
 }
 
-const useBoard = (init = initialState()) => {
+const useBoard = (init = initialState()):[GameState, Function] => {
     const [boardState, setBoardState] = useState(init);
 
-    const move = (from, to) => {
+    const move:Function = (from:number, to:number) => {
         const newState = movePiece(from, to, boardState);
-        setBoardState(newState)
-    }
+        setBoardState(newState);
+    };
 
     return [boardState, move];
 }

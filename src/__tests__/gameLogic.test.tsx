@@ -119,3 +119,17 @@ describe('canJump function', () => {
     })
 });
 
+describe('canMove function', () => {
+    const state = gen.p1Jump();
+
+    it.each`
+    index | result
+    ${0}  | ${[[],[]]}
+    ${12} | ${[[],[]]}
+    ${35} | ${[[28],[17]]}
+    ${40} | ${[[33],[]]}
+    ${26} | ${[[33],[]]}
+    `('', ({index, result}) => {
+        expect(gl.canMove(index, state)).toEqual(result);
+    });
+});

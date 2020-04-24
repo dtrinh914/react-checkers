@@ -11,11 +11,11 @@ export interface PieceClass{
 
 interface PieceProps extends PieceClass{
     index: number
-    movePiece: Function
+    move: Function
     size: number
 }
 
-const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, movePiece, size}) => {
+const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, move, size}) => {
 
     //styling
     const color = player === 1 ? ['rgb(183, 28, 28)','rgb(229, 57, 53)'] : ['rgb(33, 33, 33)','rgb(66, 66, 66)'];
@@ -51,11 +51,11 @@ const Piece: React.FC<PieceProps> = ({player, king, canDrag, hasJump, index, mov
 
     //drag and drop logic
     const [, drag] = useDrag({
-        item: {type: ItemTypes.PIECE},
+        item: {type: ItemTypes.PIECE, canDrag: canDrag},
         end: (item,monitor) => {
             const dropResult = monitor.getDropResult();
             if(item && dropResult){
-                movePiece(index, dropResult.toIndex);
+                move(index, dropResult.toIndex);
             }
         }
     });

@@ -32,11 +32,11 @@ const Board: React.FC = () => {
         return () => window.removeEventListener('resize', resizeBoard);
     }, []);
 
-    const [boardState, movePiece] = useBoard();
+    const [boardState, move] = useBoard();
 
     return(
         <div data-testid='board' ref={boardRef} style={boardStyle}>
-            {boardState.tiles.map( tile  => <Tile key={tile.id} index={tile.index} black={tile.black} movePiece={movePiece}
+            {boardState.tiles.map( tile  => <Tile key={tile.id} index={tile.index} black={tile.black} move={move}
                                                     piece={tile.piece} size={size} />)}
         </div>
     )
