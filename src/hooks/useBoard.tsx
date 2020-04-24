@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {TileClass} from '../Tile';
 import {PieceClass} from '../Piece';
 import {updateBoard, indexToCoordinates, movePiece} from '../util/gameLogic';
+import {getRandMove, showMove} from '../util/dumbAI';
 import {v4 as uuid} from 'uuid';
 
 export interface GameState{
@@ -19,7 +20,12 @@ export const initialState = () => {
     for(let i = 0; i < 64; i++){
         const [x,y] = indexToCoordinates(i);
         const piece = pieceExist(x,y);
-        tiles.push({id: uuid(), index:i, black: (x + y) % 2 === 1, piece: piece})
+        tiles.push({id: uuid(), 
+                    index:i, 
+                    black: (x + y) % 2 === 1, 
+                    piece: piece, 
+                    AIMoveTo:false
+                   })
     }
 
     const state : GameState = {
@@ -38,7 +44,8 @@ export const initialState = () => {
                                   player: 1, 
                                   king: false, 
                                   canDrag:[], 
-                                  hasJump:false
+                                  hasJump:false,
+                                  AISelected:false
                                  }
 
         if(y <= 2 && (x+y) % 2 === 1){
@@ -56,9 +63,42 @@ export const initialState = () => {
 const useBoard = (init = initialState()):[GameState, Function] => {
     const [boardState, setBoardState] = useState(init);
 
+    //handle AI's turn
+    const handleAI = (state:GameState) => {
+        setTimeout(()=> {
+            AIShowMove(state);
+        }, 300);
+    };
+
+    //makes move for AI
+    const AIMakeMove = (from:number, to: number, state:GameState) => {
+        const newState = movePiece(from, to, state);
+        newState.tiles[to].AIMoveTo = false;
+        
+        const piece = newState.tiles[to].piece
+        if (piece) piece.AISelected = false;
+
+        setBoardState(newState);
+        if(newState.playerTurn === 2) handleAI(newState);
+    };
+
+    //update state to show AI's move
+    const AIShowMove = (state:GameState) => {
+        const [from, to] = getRandMove(state);
+        if(from === -1 || to === -1) return;
+
+        const newState = showMove(from, to, state);
+        setBoardState(newState);
+        setTimeout(()=>{
+            AIMakeMove(from, to, newState);
+        }, 500)
+    };
+
     const move:Function = (from:number, to:number) => {
         const newState = movePiece(from, to, boardState);
         setBoardState(newState);
+
+        if(newState.playerTurn === 2) handleAI(newState);
     };
 
     return [boardState, move];

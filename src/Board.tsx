@@ -37,7 +37,7 @@ const Board: React.FC = () => {
     return(
         <div data-testid='board' ref={boardRef} style={boardStyle}>
             {boardState.tiles.map( tile  => <Tile key={tile.id} index={tile.index} black={tile.black} move={move}
-                                                    piece={tile.piece} size={size} />)}
+                                                    AIMoveTo={tile.AIMoveTo} piece={tile.piece} size={size} />)}
         </div>
     )
 };

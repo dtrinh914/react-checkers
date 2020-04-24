@@ -9,6 +9,7 @@ export interface TileClass {
     index: number
     black : boolean
     piece: PieceClass | null
+    AIMoveTo: boolean
 }
 
 interface TileProps extends TileClass {
@@ -16,7 +17,7 @@ interface TileProps extends TileClass {
     size: number
 }
 
-const Tile: React.FC<TileProps> = ({index, black, piece, move, size}) => {
+const Tile: React.FC<TileProps> = ({index, black, piece, AIMoveTo, move, size}) => {
     //drag and drop logic
     const [{canDrop},drop] = useDrop({
         accept: ItemTypes.PIECE,
@@ -31,7 +32,7 @@ const Tile: React.FC<TileProps> = ({index, black, piece, move, size}) => {
 
     //styling
     const tileColor = black ? 'rgb(117, 117, 117)' : 'rgb(238, 238, 238)';
-    const statusColor = canDrop ? '#5c6bc0': tileColor;
+    const statusColor = canDrop || AIMoveTo ? '#5c6bc0': tileColor;
     const TileStyle: React.CSSProperties = {
         display: 'flex',
         justifyContent: 'center',
@@ -44,7 +45,7 @@ const Tile: React.FC<TileProps> = ({index, black, piece, move, size}) => {
     return (
         <div data-testid='tile' style={TileStyle} ref={drop}>
             {piece ? <Piece player={piece.player} canDrag={piece.canDrag} hasJump={piece.hasJump}
-                        king={piece.king} index={index} move={move} size={size}  /> : ''}
+                        king={piece.king} AISelected={piece.AISelected} index={index} move={move} size={size}  /> : ''}
         </div>
     )
 };
