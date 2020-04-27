@@ -1,3 +1,22 @@
+This is the board game, Checkers aka English draughts, built in React.
+
+There are many variants on this game. <br />
+The rules found here are used to build this version of the game: <br />
+https://en.wikipedia.org/wiki/English_draughts/
+
+This project is split into three main components, listed here from top to bottom: <br /
+1. Board
+2. Tile
+3. Piece
+
+The game state and logic is handled by a custom react hook, useBoard. <br /> 
+This hook returns the state and a function to handle the movement of checker pieces.
+
+The drag and drop user interface is implement with react-dnd: <br />
+https://github.com/react-dnd/react-dnd
+
+Currently, there is a rudimentary computer opponent that will make a random move on their turn.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -26,19 +45,3 @@ The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
