@@ -4,7 +4,7 @@ There are many variants on this game. <br />
 The rules found here are used to build this version of the game: <br />
 https://en.wikipedia.org/wiki/English_draughts/
 
-This project is split into three main components, listed here from top to bottom: <br /
+This project is split into three main components, listed here from top to bottom: <br />
 1. Board
 2. Tile
 3. Piece
